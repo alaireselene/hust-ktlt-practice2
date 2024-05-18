@@ -88,20 +88,26 @@ public:
     }
 
     void printList() {
-        if (head == NULL) {
-            std::cout << "Employer list is empty. Action cancelled." << std::endl;
-            return;
-        }
-        Employer* temp = head;
-        std::cout << std::left << std::setfill('=') << std::setw(50) << "EMPLOYERS TABLE" << std::endl;
-        std::cout << std::setfill(' ') << std::setw(6) << std::left << "Index" << std::setw(6) << std::left << "ID" << std::setw(3) << std::left << "Full Name" << std::setw(30) << std::left << "Salary" << std::endl;
-        std::cout << std::setfill('-') << std::setw(50) << std::endl;
-        while (temp != NULL) {
-            std::cout << std::setfill(' ') << std::setw(6) << std::left << temp->getIndex() << std::setw(6) << std::left << temp->getId() << std::setw(3) << std::left << temp->getFullName() << std::setw(30) << std::left << temp->getSalary() << std::endl;
-            temp = temp->next;
-        }
-        std::cout << std::setfill('=') << std::setw(50) << ' ' << std::endl;
+    if (head == NULL) {
+        std::cout << "Employer list is empty. Action cancelled." << std::endl;
+        return;
     }
+    Employer* temp = head;
+    std::cout << std::left << std::setfill('=') << std::setw(70) << "EMPLOYERS TABLE" << std::endl;
+    std::cout << std::setfill(' ') << std::setw(10) << std::left << "Index" 
+              << std::setw(10) << std::left << "ID" 
+              << std::setw(30) << std::left << "Full Name" 
+              << std::setw(20) << std::left << "Salary" << std::endl;
+    std::cout << std::setfill('-') << std::setw(70) << "" << std::endl;
+    while (temp != NULL) {
+        std::cout << std::setfill(' ') << std::setw(10) << std::left << temp->getIndex() 
+                  << std::setw(10) << std::left << temp->getId() 
+                  << std::setw(30) << std::left << temp->getFullName() 
+                  << std::setw(20) << std::left << temp->getSalary() << std::endl;
+        temp = temp->next;
+    }
+    std::cout << std::setfill('=') << std::setw(70) << "" << std::endl;
+}
 };
 
 int main() {
