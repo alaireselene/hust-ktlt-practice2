@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <cmath>
 
 class Node {
 private:
@@ -77,6 +78,30 @@ public:
             temp = temp->next;
         }
     }
+
+    Polynomial operator+(const Polynomial& other) {
+        Polynomial result;
+        Node* temp = this->head;
+        while (temp != NULL) {
+            result.addNode(temp->getData(), temp->getPower());
+            temp = temp->next;
+        }
+        temp = other.head;
+        while (temp != NULL) {
+            result.addNode(temp->getData(), temp->getPower());
+            temp = temp->next;
+        }
+        return result;
+    }
+    int evaluate(int x) {
+        Node* temp = this->head;
+        int result = 0;
+        while (temp != NULL) {
+            result += temp->getData() * std::pow(x, temp->getPower());
+            temp = temp->next;
+        }
+        return result;
+    }
 };
 
 int main() {
@@ -88,8 +113,33 @@ int main() {
         std::cin >> data;
         p.addNode(data, n - i - 1);
     }
+    Polynomial q;
+    for (int i = 0; i < n; i++) {
+        int data;
+        std::cin >> data;
+        q.addNode(data, n - i - 1);
+    }
+    int x_0;
+    std::cin >> x_0;
+
+    std::cout << "Polynomial 1: " << std::endl;
     p.printPolynomial();
     p.derivative();
+    std::cout << "Derivative of Polynomial 1: " << std::endl;
     p.printPolynomial();
+
+    std::cout << "Polynomial 2: " << std::endl;
+    q.printPolynomial();
+    q.derivative();
+    std::cout << "Derivative of Polynomial 2: " << std::endl;
+    q.printPolynomial();
+
+    Polynomial r = p + q;
+    std::cout << "Sum of Polynomials 1 and 2 after derivative: " << std::endl;
+    r.printPolynomial();
+
+    std::cout << "Value of Polynomial 1 at x = " << x_0 << ": " << p.evaluate(x_0) << std::endl;
+    std::cout << "Value of Polynomial 2 at x = " << x_0 << ": " << q.evaluate(x_0) << std::endl;
+
     return 0;
 }
