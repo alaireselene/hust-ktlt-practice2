@@ -8,25 +8,21 @@ int highestSalary = 0;
 
 class Employer {
 private:
-    int index;
     std::string id;
     std::string fullName;
     int salary;
 public:
     Employer* next;
     Employer(std::string id, std::string fullName, int salary) {
-        this->index = ++listSize;
         this->id = id;
         this->fullName = fullName;
         this->salary = salary;
         this->next = NULL;
+        listSize++;
         totalSalary += salary;
         if (salary > highestSalary) {
             highestSalary = salary;
         }
-    }
-    int getIndex() {
-        return this->index;
     }
     std::string getId() {
         return this->id;
@@ -36,6 +32,20 @@ public:
     }
     int getSalary() {
         return this->salary;
+    }
+    void editId(std::string id) {
+        this->id = id;
+    }
+    void editFullName(std::string fullName) {
+        this->fullName = fullName;
+    }
+    void editSalary(int salary) {
+        totalSalary -= this->salary;
+        this->salary = salary;
+        totalSalary += salary;
+        if (salary > highestSalary) {
+            highestSalary = salary;
+        }
     }
 };
 
@@ -58,28 +68,61 @@ public:
             }
             temp->next = newEmployer;
         }
+        std::cout << "Employer " << fullName << " added successfully." << std::endl;
     }
 
-    void removeEmployer(int index) {
+    void removeEmployer(std::string id) {
         if (head == NULL) {
             std::cout << "Employer list is empty. Action cancelled." << std::endl;
             return;
         }
         Employer* temp = head;
-        if (temp->getIndex() == index) {
+        if (temp->getId() == id) {
+            std::cout << "Employer " << temp->getFullName() << " removed successfully. Here is the result:" << std::endl;
             totalSalary -= temp->getSalary();
+            if (temp->getSalary() == highestSalary) {
+                int purgedHighestSalary = highestSalary;
+                highestSalary = 0;
+                Employer* temp2 = head;
+                while (temp2 != NULL) {
+                    if (temp2->getSalary() > highestSalary && temp2->getSalary() != purgedHighestSalary) {
+                        highestSalary = temp2->getSalary();
+                    }
+                    temp2 = temp2->next;
+                }
+            }
             head = temp->next;
             delete temp;
             --listSize;
             return;
         }
         while (temp->next != NULL) {
-            if (temp->next->getIndex() == index) {
+            if (temp->next->getId() == id) {
+                std::cout << "Employer " << temp->next->getFullName() << " removed successfully. Here is the result:" << std::endl;
                 totalSalary -= temp->next->getSalary();
                 Employer* temp2 = temp->next;
                 temp->next = temp2->next;
                 delete temp2;
                 --listSize;
+                while (temp->next != NULL) {
+                    temp = temp->next;
+                }
+                return;
+            }
+            temp = temp->next;
+        }
+        std::cout << "Employer not found. Action cancelled." << std::endl;
+    }
+    void editEmployerSalary(std::string id, int newSalary) {
+        if (head == NULL) {
+            std::cout << "Employer list is empty. Action cancelled." << std::endl;
+            return;
+        }
+        Employer* temp = head;
+        while (temp != NULL) {
+            if (temp->getId() == id) {
+                temp->editSalary(newSalary);
+                std::cout << "Employer " << temp->getFullName() << " salary edited successfully. Here is the result:" << std::endl;
                 return;
             }
             temp = temp->next;
@@ -88,41 +131,45 @@ public:
     }
 
     void printList() {
-    if (head == NULL) {
-        std::cout << "Employer list is empty. Action cancelled." << std::endl;
-        return;
+        if (head == NULL) {
+            std::cout << "Employer list is empty. Action cancelled." << std::endl;
+            return;
+        }
+        Employer* temp = head;
+        std::cout << std::left << std::setfill('=') << std::setw(70) << "[EMPLOYERS TABLE]"<< std::endl;
+        std::cout << std::setfill(' ') << std::setw(10) << std::left << "Index" 
+                  << std::setw(10) << std::left << "ID" 
+                  << std::setw(30) << std::left << "Full Name" 
+                  << std::setw(20) << std::left << "Salary" << std::endl;
+        std::cout << std::setfill('-') << std::setw(70) << "" << std::endl;
+        int index = 1;
+        while (temp != NULL) {
+            std::cout << std::setfill(' ') << std::setw(10) << std::left << index++ 
+                      << std::setw(10) << std::left << temp->getId() 
+                      << std::setw(30) << std::left << temp->getFullName() 
+                      << std::setw(20) << std::left << temp->getSalary() << std::endl;
+            temp = temp->next;
+        }
+        std::cout << std::setfill('-') << std::setw(70) << "" << std::endl;
+        std::cout << "Avg. salary: " << float(totalSalary)/listSize <<", Highest: " << highestSalary << std::endl;
+        std::cout << std::setfill('=') << std::setw(70) << "" << std::endl;
+        std::cout << std::endl;
     }
-    Employer* temp = head;
-    std::cout << std::left << std::setfill('=') << std::setw(70) << "EMPLOYERS TABLE" << std::endl;
-    std::cout << std::setfill(' ') << std::setw(10) << std::left << "Index" 
-              << std::setw(10) << std::left << "ID" 
-              << std::setw(30) << std::left << "Full Name" 
-              << std::setw(20) << std::left << "Salary" << std::endl;
-    std::cout << std::setfill('-') << std::setw(70) << "" << std::endl;
-    while (temp != NULL) {
-        std::cout << std::setfill(' ') << std::setw(10) << std::left << temp->getIndex() 
-                  << std::setw(10) << std::left << temp->getId() 
-                  << std::setw(30) << std::left << temp->getFullName() 
-                  << std::setw(20) << std::left << temp->getSalary() << std::endl;
-        temp = temp->next;
-    }
-    std::cout << std::setfill('=') << std::setw(70) << "" << std::endl;
-}
 };
 
 int main() {
     EmployerList employerList;
-    employerList.addEmployer("1", "John Doe", 1000);
-    employerList.addEmployer("2", "Jane Doe", 2000);
-    employerList.addEmployer("3", "Jack Doe", 3000);
+    employerList.addEmployer("20227148", "Nguyen Truong Son", 1000);
+    employerList.addEmployer("20227149", "Tran Trung Long", 2000);
+    employerList.addEmployer("20227150", "Hoang Bao An", 3000);
     employerList.printList();
-    employerList.removeEmployer(2);
+    employerList.removeEmployer("20227149");
     employerList.printList();
-    employerList.removeEmployer(1);
+    employerList.editEmployerSalary("20227148", 5000);
     employerList.printList();
-    employerList.removeEmployer(3);
+    employerList.removeEmployer("20227148");
     employerList.printList();
-    employerList.removeEmployer(3);
+    employerList.removeEmployer("20227150");
     employerList.printList();
     return 0;
 }
